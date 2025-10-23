@@ -1,0 +1,41 @@
+
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:14
+    container_name: connecthub-postgres
+    environment:
+      POSTGRES_DB: connecthub
+      POSTGRES_USER: humyle
+      POSTGRES_PASSWORD: hello123
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - connecthub-net
+
+  app:
+    build: .
+    container_name: connecthub-app
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/connecthub
+      SPRING_DATASOURCE_USERNAME: humyle
+      SPRING_DATASOURCE_PASSWORD: hello123
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_SHOW_SQL: "true"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    networks:
+      - connecthub-net
+
+volumes:
+  pgdata:
+
+networks:
+  connecthub-net:
+
+
