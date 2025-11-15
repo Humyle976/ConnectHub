@@ -4,8 +4,10 @@ import com.connecthub.app.models.RoomModel;
 import com.connecthub.app.models.UserModel;
 import com.connecthub.app.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -16,7 +18,11 @@ import java.util.Optional;
 @Service
 public class UserService {
 
+    @Autowired
+    AuthenticationManager authenticationManager;
+
     private final UserRepository userRepository;
+    private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
     @Autowired
     public UserService(UserRepository userRepository) {
@@ -37,34 +43,20 @@ public class UserService {
         return new ResponseEntity<>(resp,HttpStatus.OK);
     }
 
-    public ResponseEntity<Map<String,Object>> createUser(UserModel user) {
-
-        try{
-            UserModel createdUser = userRepository.save(user);
-            Map<String, Object> resp = new HashMap<>();
-            resp.put("status", HttpStatus.OK.value());
-            resp.put("data", createdUser);
-            return new ResponseEntity<>(resp, HttpStatus.OK);
-        }catch(Exception e){
-            Map<String, Object> resp = new HashMap<>();
-            resp.put("error", e.getMessage());
-            resp.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return new ResponseEntity<>(resp, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public UserModel registerUser(UserModel user) {
+        user.setPassword(encoder.encode(user.getPassword()));
+        return userRepository.save(user);
     }
 
-    public ResponseEntity<Map<String,Object>> getUserById(Integer id) {
-        Optional<UserModel> userModel = userRepository.findById(id);
-        if(userModel.isEmpty()){
-            Map<String, Object> resp = new HashMap<>();
-            resp.put("status", HttpStatus.NOT_FOUND.value());
-            resp.put("error", "Room not found");
-            return new ResponseEntity<>(resp, HttpStatus.NOT_FOUND);
+    public String loginUser(UserModel user) {
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(),user.getPassword()));
+        if(authentication.isAuthenticated()) {
+            return "Success";
         }
-        Map<String,Object> resp = new HashMap<>();
-        resp.put("status", HttpStatus.OK.value());
-        resp.put("data", userModel);
-        return new ResponseEntity<>(resp,HttpStatus.OK);
+        return "Fail";
+    }
+    public UserModel getUserById(Integer id) {
+        return userRepository.findById(id).orElse(null);
     }
 
     public void deleteUser(Integer id) {
