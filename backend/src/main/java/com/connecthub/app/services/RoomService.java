@@ -22,6 +22,7 @@ public class RoomService {
     }
 
     public ResponseEntity<Map<String,Object>> getRooms(){
+        System.out.println("Hello");
         List<RoomModel> rooms = roomRepository.findAll();
         if (!rooms.isEmpty()) {
             Map<String,Object> response = new HashMap<>();
