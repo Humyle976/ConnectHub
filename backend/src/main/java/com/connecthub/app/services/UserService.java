@@ -1,5 +1,6 @@
 package com.connecthub.app.services;
 
+import com.connecthub.app.models.RoomModel;
 import com.connecthub.app.models.UserModel;
 import com.connecthub.app.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +9,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -24,8 +29,18 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public List<UserModel> getAllUsers() {
-        return userRepository.findAll();
+    public ResponseEntity<Map<String,Object>> getAllUsers() {
+        List<UserModel> users =  userRepository.findAll();
+        if(users.isEmpty()) {
+            Map<String,Object> resp = new HashMap<>();
+            resp.put("error","Users not found");
+            resp.put("status", HttpStatus.NOT_FOUND.value());
+            return new ResponseEntity<>(resp,HttpStatus.NOT_FOUND);
+        }
+        Map<String,Object> resp = new HashMap<>();
+        resp.put("status", HttpStatus.OK.value());
+        resp.put("data", users);
+        return new ResponseEntity<>(resp,HttpStatus.OK);
     }
 
     public UserModel registerUser(UserModel user) {
