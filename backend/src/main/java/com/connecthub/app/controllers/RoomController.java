@@ -3,9 +3,11 @@ package com.connecthub.app.controllers;
 import com.connecthub.app.models.RoomModel;
 import com.connecthub.app.services.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class RoomController {
@@ -14,7 +16,7 @@ public class RoomController {
     private RoomService roomService;
 
     @GetMapping("/rooms")
-    public List<RoomModel> getRooms() {
+    public ResponseEntity<Map<String,Object>> getRooms() {
         return roomService.getRooms();
     }
 
