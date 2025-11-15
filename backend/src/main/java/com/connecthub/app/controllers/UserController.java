@@ -3,6 +3,7 @@ package com.connecthub.app.controllers;
 import com.connecthub.app.models.UserModel;
 import com.connecthub.app.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,8 +24,13 @@ public class UserController {
         return userService.getUserById(userId);
     }
 
-    @PostMapping("/user")
-    public UserModel createUser(@RequestBody UserModel userModel) {
-        return userService.createUser(userModel);
+    @PostMapping("/register")
+    public UserModel registerUser(@RequestBody UserModel userModel) {
+        return userService.registerUser(userModel);
+    }
+
+    @PostMapping("/login")
+    public String loginUser(@RequestBody UserModel userModel) {
+        return userService.loginUser(userModel);
     }
 }
