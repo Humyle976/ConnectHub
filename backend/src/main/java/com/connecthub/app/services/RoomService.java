@@ -36,16 +36,48 @@ public class RoomService {
         }
     }
 
-    public RoomModel createRoom(RoomModel roomModel){
-        return roomRepository.save(roomModel);
+    public ResponseEntity<Map<String,Object>> createRoom(RoomModel roomModel){
+        try{
+            RoomModel savedRoom = roomRepository.save(roomModel);
+            Map<String, Object> resp = new HashMap<>();
+            resp.put("status", HttpStatus.OK.value());
+            resp.put("data", savedRoom);
+            return new ResponseEntity<>(resp, HttpStatus.OK);
+
+        }catch(Exception e){
+            Map<String, Object> resp = new HashMap<>();
+            resp.put("error", e.getMessage());
+            resp.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return new ResponseEntity<>(resp, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    public void deleteRoomById(Integer id){
-        roomRepository.deleteById(id);
+    public ResponseEntity<Map<String,Object>> deleteRoomById(Integer id){
+        try {
+            roomRepository.deleteById(id);
+            Map<String, Object> resp = new HashMap<>();
+            resp.put("status", HttpStatus.OK.value());
+            return new ResponseEntity<>(resp, HttpStatus.OK);
+        }catch (Exception e){
+            Map<String, Object> resp = new HashMap<>();
+            resp.put("error", e.getMessage());
+            resp.put("status", HttpStatus.NOT_FOUND.value());
+            return new ResponseEntity<>(resp, HttpStatus.NOT_FOUND);
+        }
     }
 
-    public RoomModel getRoomById(Integer id){
-        return roomRepository.findById(id).orElse(null);
+    public ResponseEntity<Map<String,Object>> getRoomById(Integer id){
+        Optional<RoomModel> roomModel = roomRepository.findById(id);
+        if(roomModel.isEmpty()){
+            Map<String, Object> resp = new HashMap<>();
+            resp.put("status", HttpStatus.NOT_FOUND.value());
+            resp.put("error", "Room not found");
+            return new ResponseEntity<>(resp, HttpStatus.NOT_FOUND);
+        }
+        Map<String,Object> resp = new HashMap<>();
+        resp.put("status", HttpStatus.OK.value());
+        resp.put("data", roomModel);
+        return new ResponseEntity<>(resp,HttpStatus.OK);
     }
 
 }

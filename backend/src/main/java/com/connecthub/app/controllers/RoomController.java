@@ -21,17 +21,17 @@ public class RoomController {
     }
 
     @PostMapping("/room")
-    public RoomModel createRoom(@RequestBody RoomModel roomModel) {
+    public ResponseEntity<Map<String,Object>> createRoom(@RequestBody RoomModel roomModel) {
         return roomService.createRoom(roomModel);
     }
 
     @DeleteMapping("/room/{roomId}")
-    public void deleteRoom(@PathVariable("roomId") Integer roomId) {
-        roomService.deleteRoomById(roomId);
+    public ResponseEntity<Map<String,Object>> deleteRoom(@PathVariable("roomId") Integer roomId) {
+        return roomService.deleteRoomById(roomId);
     }
 
     @GetMapping("/room/{roomId}")
-    public RoomModel getRoom(@PathVariable("roomId") Integer roomId) {
+    public ResponseEntity<Map<String,Object>> getRoom(@PathVariable("roomId") Integer roomId) {
         return roomService.getRoomById(roomId);
     }
 }
