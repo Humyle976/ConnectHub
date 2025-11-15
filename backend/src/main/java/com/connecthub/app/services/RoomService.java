@@ -7,11 +7,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.Keymap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 public class RoomService {
@@ -25,17 +23,17 @@ public class RoomService {
 
     public ResponseEntity<Map<String,Object>> getRooms(){
         List<RoomModel> rooms = roomRepository.findAll();
-
-        if(rooms.isEmpty()){
-            Map<String,Object> resp = new HashMap<>();
-            resp.put("error", "Rooms not found");
-            resp.put("status", HttpStatus.NOT_FOUND.value());
-            return new ResponseEntity<>(resp,HttpStatus.NOT_FOUND);
+        if (!rooms.isEmpty()) {
+            Map<String,Object> response = new HashMap<>();
+            response.put("status",HttpStatus.OK.value());
+            response.put("data",rooms);
+          return new ResponseEntity<>(response,HttpStatus.OK);
+        }else {
+            Map<String,Object> response = new HashMap<>();
+            response.put("status", HttpStatus.NOT_FOUND.value());
+            response.put("error", "No rooms found");
+            return new ResponseEntity<>(response,HttpStatus.NOT_FOUND);
         }
-        Map<String,Object> resp = new HashMap<>();
-        resp.put("status", HttpStatus.OK.value());
-        resp.put("data", rooms);
-        return new ResponseEntity<>(resp,HttpStatus.OK);
     }
 
     public ResponseEntity<Map<String,Object>> createRoom(RoomModel roomModel){
