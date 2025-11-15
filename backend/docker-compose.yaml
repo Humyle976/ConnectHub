@@ -25,6 +25,8 @@ services:
       SPRING_DATASOURCE_PASSWORD: hello123
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
       SPRING_JPA_SHOW_SQL: "true"
+      JWT_KEY: "nowonderwedienowonderwedienowonderwedienowonderwedienowonderwedienowonderwedienowonderwedienowonderwedie"
+
     ports:
       - "8080:8080"
     depends_on:
